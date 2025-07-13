@@ -54,41 +54,20 @@ A comprehensive computer vision project for detecting alpacas using various YOLO
 ### Video Detection Results
 
 #### Video 1: Alpaca Detection Demo
-**File**: `alpaca.mp4_out`
+![Alpaca Detection Demo](https://github.com/ganessa037/object-detection-alpaca/assets/alpaca.mp4_out)
 
 *Original alpaca video with real-time detection overlay*
 
 #### Video 2: Multiple Alpaca Detection  
-**File**: `alpaca2.mp4_out`
+![Multiple Alpaca Detection](https://github.com/ganessa037/object-detection-alpaca/assets/alpaca2.mp4_out)
 
 *Secondary video demonstration showing model performance on different scenarios*
 
-**Video Features:**
-- Real-time bounding box detection
-- Confidence score display
-- Multiple alpaca tracking
-- Smooth video processing at original FPS
 
-## 🚀 Model Usage
 
-### Best Model Recommendation
-```python
-from ultralytics import YOLO
 
-# Load the best performing model
-model = YOLO("runs/detect/train40/weights/best.pt")  # YOLOv8n
 
-# Predict with low confidence threshold
-results = model("your_image.jpg", conf=0.1)
-results[0].show()  # Display results
 ```
-
-### Performance Notes
-- Use **confidence threshold of 0.1** for optimal detection
-- Model works best on clear alpaca images
-- Handles multiple alpacas in single image
-- Real-time video processing capable
-
 ## 📁 Project Structure
 
 ```
@@ -111,20 +90,6 @@ object-detection-alpaca/
 └── predicted_result.jpg # Sample output
 ```
 
-## 🔧 Training Configuration
-
-- **Input Resolution**: 640x640
-- **Batch Size**: Optimized for 8GB GPU memory
-- **Optimizer**: AdamW
-- **Data Augmentation**: Standard YOLO augmentations
-- **Epochs**: 40 (optimal performance achieved)
-
-## 📊 Technical Specifications
-
-### Hardware Requirements
-- **GPU**: 8GB VRAM minimum
-- **RAM**: 16GB recommended
-- **Storage**: 5GB for dataset and models
 
 ### Software Dependencies
 - Python 3.8+
@@ -133,7 +98,7 @@ object-detection-alpaca/
 - PyTorch
 - CUDA (for GPU acceleration)
 
-## 🎯 Model Selection Criteria
+## Model Selection Criteria
 
 The **YOLOv8n** model was selected as the final model based on:
 1. **Highest mAP@0.5** (0.733) - Best overall detection accuracy
@@ -141,12 +106,3 @@ The **YOLOv8n** model was selected as the final model based on:
 3. **Best recall** (0.672) - Better at finding all alpacas
 4. **Consistent performance** across different test scenarios
 5. **Optimal speed/accuracy balance** for real-time applications
-
-
-## 📝 Usage Instructions
-
-1. **Training**: Run `python main.py` with proper config.yaml
-2. **Image Prediction**: Use `python predict_pic.py` 
-3. **Video Processing**: Execute `python predict_vid.py`
-4. **Model Comparison**: Analyze with `python compare_models.py`
-
