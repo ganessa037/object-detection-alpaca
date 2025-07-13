@@ -3,21 +3,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-# Define the training runs to compare
-training_runs = ['train', 'train2', 'train35', 'train40']
+# Define the training runs to compare with their YOLO versions
+training_runs = {
+    'train': 'YOLOv9t',
+    'train2': 'YOLOv10n', 
+    'train35': 'YOLOv11n',
+    'train40': 'YOLOv8n'
+}
 colors = ['blue', 'red', 'green', 'orange']
 models_data = {}
 
 print("=== YOLO Models Comparison Analysis ===\n")
 
 # Load data for each model
-for run in training_runs:
+for run, yolo_version in training_runs.items():
     csv_path = f'runs/detect/{run}/results.csv'
     if os.path.exists(csv_path):
         df = pd.read_csv(csv_path)
         df.columns = df.columns.str.strip()
-        models_data[run] = df
-        print(f"✅ Loaded {run}: {len(df)} epochs")
+        models_data[yolo_version] = df
+        print(f"✅ Loaded {yolo_version}: {len(df)} epochs")
     else:
         print(f"❌ Missing: {csv_path}")
 
@@ -25,83 +30,31 @@ if not models_data:
     print("No training data found!")
     exit()
 
-print(f"\nComparing {len(models_data)} models...\n")
+print(f"\nComparing {len(models_data)} YOLO models...\n")
 
-# Create comprehensive comparison plots
-fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-fig.suptitle('YOLO Models Comparison - All Training Runs', fontsize=16, fontweight='bold')
+# Create mAP@0.5 comparison plot only
+fig, ax = plt.subplots(1, 1, figsize=(12, 8))
+fig.suptitle('YOLO Models mAP@0.5 Comparison', fontsize=16, fontweight='bold')
 
-# 1. Precision Comparison
-ax1 = axes[0, 0]
-for i, (run, df) in enumerate(models_data.items()):
-    ax1.plot(df['epoch'], df['metrics/precision(B)'], color=colors[i], 
-             linewidth=2, label=f'{run}', marker='o', markersize=2)
-ax1.set_title('Precision (B) Comparison', fontweight='bold')
-ax1.set_xlabel('Epoch')
-ax1.set_ylabel('Precision')
-ax1.grid(True, alpha=0.3)
-ax1.legend()
-ax1.set_ylim(0, 1)
+# mAP@0.5 Comparison
+for i, (yolo_version, df) in enumerate(models_data.items()):
+    ax.plot(df['epoch'], df['metrics/mAP50(B)'], color=colors[i], 
+             linewidth=3, label=f'{yolo_version}', marker='^', markersize=4)
 
-# 2. Recall Comparison
-ax2 = axes[0, 1]
-for i, (run, df) in enumerate(models_data.items()):
-    ax2.plot(df['epoch'], df['metrics/recall(B)'], color=colors[i], 
-             linewidth=2, label=f'{run}', marker='s', markersize=2)
-ax2.set_title('Recall (B) Comparison', fontweight='bold')
-ax2.set_xlabel('Epoch')
-ax2.set_ylabel('Recall')
-ax2.grid(True, alpha=0.3)
-ax2.legend()
-ax2.set_ylim(0, 1)
+ax.set_title('mAP@0.5 Comparison - YOLO Models', fontweight='bold', fontsize=14)
+ax.set_xlabel('Epoch', fontsize=12)
+ax.set_ylabel('mAP@0.5', fontsize=12)
+ax.grid(True, alpha=0.3)
+ax.legend(fontsize=12)
+ax.set_ylim(0, 1)
 
-# 3. mAP@0.5 Comparison
-ax3 = axes[0, 2]
-for i, (run, df) in enumerate(models_data.items()):
-    ax3.plot(df['epoch'], df['metrics/mAP50(B)'], color=colors[i], 
-             linewidth=2, label=f'{run}', marker='^', markersize=2)
-ax3.set_title('mAP@0.5 Comparison', fontweight='bold')
-ax3.set_xlabel('Epoch')
-ax3.set_ylabel('mAP@0.5')
-ax3.grid(True, alpha=0.3)
-ax3.legend()
-ax3.set_ylim(0, 1)
-
-# 4. mAP@0.5:0.95 Comparison
-ax4 = axes[1, 0]
-for i, (run, df) in enumerate(models_data.items()):
-    ax4.plot(df['epoch'], df['metrics/mAP50-95(B)'], color=colors[i], 
-             linewidth=2, label=f'{run}', marker='d', markersize=2)
-ax4.set_title('mAP@0.5:0.95 Comparison', fontweight='bold')
-ax4.set_xlabel('Epoch')
-ax4.set_ylabel('mAP@0.5:0.95')
-ax4.grid(True, alpha=0.3)
-ax4.legend()
-ax4.set_ylim(0, 1)
-
-# 5. Training Loss Comparison
-ax5 = axes[1, 1]
-for i, (run, df) in enumerate(models_data.items()):
-    if 'train/box_loss' in df.columns:
-        ax5.plot(df['epoch'], df['train/box_loss'], color=colors[i], 
-                 linewidth=2, label=f'{run}', marker='o', markersize=2)
-ax5.set_title('Training Box Loss', fontweight='bold')
-ax5.set_xlabel('Epoch')
-ax5.set_ylabel('Box Loss')
-ax5.grid(True, alpha=0.3)
-ax5.legend()
-
-# 6. Validation Loss Comparison
-ax6 = axes[1, 2]
-for i, (run, df) in enumerate(models_data.items()):
-    if 'val/box_loss' in df.columns:
-        ax6.plot(df['epoch'], df['val/box_loss'], color=colors[i], 
-                 linewidth=2, label=f'{run}', marker='s', markersize=2)
-ax6.set_title('Validation Box Loss', fontweight='bold')
-ax6.set_xlabel('Epoch')
-ax6.set_ylabel('Box Loss')
-ax6.grid(True, alpha=0.3)
-ax6.legend()
+# Highlight best performance for each model
+for i, (yolo_version, df) in enumerate(models_data.items()):
+    best_map50_idx = df['metrics/mAP50(B)'].idxmax()
+    best_epoch = df.loc[best_map50_idx, 'epoch']
+    best_value = df.loc[best_map50_idx, 'metrics/mAP50(B)']
+    ax.plot(best_epoch, best_value, 'o', color=colors[i], markersize=8, 
+            markeredgecolor='black', markeredgewidth=2)
 
 plt.tight_layout()
 plt.savefig('models_comparison.png', dpi=300, bbox_inches='tight')
@@ -164,7 +117,10 @@ print(f"🔍 Recall: {best_model['Recall_at_Best']:.3f}")
 print(f"📈 mAP@0.5:0.95: {best_model['mAP50-95_at_Best']:.3f}")
 
 print(f"\n💡 Model Selection Recommendation:")
-print(f"   Use: runs/detect/{best_model['Model']}/weights/best.pt")
+# Map YOLO version back to training folder
+yolo_to_folder = {v: k for k, v in training_runs.items()}
+best_folder = yolo_to_folder[best_model['Model']]
+print(f"   Use: runs/detect/{best_folder}/weights/best.pt")
 print(f"   This model achieved the highest mAP@0.5 = {best_model['Best_mAP50']:.3f}")
 
 # Check for training lengths and suggest improvements
@@ -187,6 +143,6 @@ else:
     print(f"   Clear winner: {best_model['Model']}")
 
 print(f"\n🚀 Next Steps:")
-print(f"   1. Use the best model: runs/detect/{best_model['Model']}/weights/best.pt")
+print(f"   1. Use the best model: runs/detect/{best_folder}/weights/best.pt")
 print(f"   2. Test predictions with confidence threshold around 0.1-0.3")
 print(f"   3. Consider ensemble methods if multiple models perform well")
