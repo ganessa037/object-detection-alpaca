@@ -133,16 +133,5 @@ for _, row in comp_df.iterrows():
     else:
         print(f"   ✅ {row['Model']}: Best epoch {int(best_epoch)}/{epochs} - training length was adequate")
 
-print(f"\n📊 Performance Insights:")
-precisions = comp_df['Best_mAP50'].values
-if np.std(precisions) < 0.05:
-    print(f"   📌 All models perform similarly (std: {np.std(precisions):.3f})")
-    print(f"   Consider using the model with the highest final epoch performance")
-else:
-    print(f"   📌 Significant performance differences found (std: {np.std(precisions):.3f})")
-    print(f"   Clear winner: {best_model['Model']}")
 
-print(f"\n🚀 Next Steps:")
-print(f"   1. Use the best model: runs/detect/{best_folder}/weights/best.pt")
-print(f"   2. Test predictions with confidence threshold around 0.1-0.3")
-print(f"   3. Consider ensemble methods if multiple models perform well")
+

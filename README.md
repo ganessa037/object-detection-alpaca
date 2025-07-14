@@ -18,7 +18,7 @@ A computer vision project comparing YOLOv8n, YOLOv9t, YOLOv10n, and YOLOv11n mod
 
 ![Models Comparison Chart](models_comparison.png)
 
-**Winner**: YOLOv8n with 73.3% mAP@0.5
+**Best Model**: YOLOv8n with 73.3% mAP@0.5
 
 ## Results
 
@@ -26,8 +26,8 @@ A computer vision project comparing YOLOv8n, YOLOv9t, YOLOv10n, and YOLOv11n mod
 ![Alpaca Detection Result](predicted_result.jpg)
 
 ### Video Detection
-- [alpaca.mp4_out](https://github.com/ganessa037/object-detection-alpaca/raw/main/alpaca.mp4_out)
-- [alpaca2.mp4_out](https://github.com/ganessa037/object-detection-alpaca/raw/main/alpaca2.mp4_out)
+- [Video Demo 1](https://youtu.be/KbTfCwPjC6k)
+- [Video Demo 2](https://youtu.be/-V0uuBVuBoI)
 
 
 
